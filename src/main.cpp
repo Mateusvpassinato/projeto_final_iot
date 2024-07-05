@@ -38,8 +38,8 @@ char pass[] = "33991700";*/
 /*char ssid[] = "LCI01";
 char pass[] = "up3@wz01";*/
 
-char ssid[] = "PousadaSentiero";
-char pass[] = "sentiero";
+char ssid[] = "_Mateus_";
+char pass[] = "91469365";
 
 //INICIALIZA A BIBLIOTECA PARA COLETA DE TEMPERATURA E UMIDADE
 DHT dht(DHTPIN, DHTTYPE);
@@ -50,17 +50,18 @@ BlynkTimer timer;
 //DECLARA AS VARIÁVEIS QUE SERÃO UTILIZADAS
 float h, t, tbase, incremento;
 int status_buzzer;
+int status_interface;
 
 // This function is called every time the Virtual Pin 0 state changes
 BLYNK_WRITE(V8)
 {
   // Set incoming value from pin V0 to a variable
   int value = param.asInt();
-
+  
   // Update state
   digitalWrite(BUZZER, value);
 
-  Blynk.virtualWrite(V8, value);
+  status_interface = value;
 }
 
 // This function is called every time the device is connected to the Blynk.Cloud
@@ -79,12 +80,9 @@ void myTimerEvent()
   Blynk.virtualWrite(V7, h);
   Blynk.virtualWrite(V6, t);
 
-  Blynk.virtualWrite(V8, status_buzzer);
+  Blynk.virtualWrite(V8, status_interface);
 
-
-  Blynk.syncAll();
-
-  
+  Serial.println(status_interface);  
 }
 
 void setup()
@@ -115,10 +113,11 @@ void setup()
   incremento = 4;  
 
   // Setup a function to be called every second
-  timer.setInterval(500L, myTimerEvent);
+  timer.setInterval(1000L, myTimerEvent);
 
   t=10;
   status_buzzer = 0;
+  status_interface = 0;
   
 }
 
@@ -130,7 +129,7 @@ void loop()
 
   //COLETA TEMPERATURA E UMIDADE
   h = dht.readHumidity();
-  //t = dht.readTemperature();
+  t = dht.readTemperature();
 
   //MOSTRA NO CONSOLE AS INFORMAÇÕES
   Serial.println("Temperatura");  
@@ -139,7 +138,7 @@ void loop()
   Serial.println(h);
 
   //ESSA LINHA PODE SER UTILIZADA PARA SIMULAR O SISTEMA SEM A COLETA DE TEMPERATURA
-  t = t + 0.5;
+  //t = t + 0.5;
 
   //CONDIÇÃO PARA LIGAÇÃO DO PRIMEIRO LED
   if (t > (tbase + (incremento*1))){
@@ -192,28 +191,27 @@ void loop()
 
   //CONDIÇÃO PARA DISPARO DO BUZZER (A PARTIR DO SEXTO LED)
   if (t > (tbase + (incremento*6))){
-    
-    
-    digitalWrite(BUZZER, HIGH); //LIGAR O BUZZER
 
-    if (digitalRead(BUZZER)){
-    status_buzzer = 1;
-    }else{
-      status_buzzer = 0;
+    if (status_buzzer == 0){
+      status_interface = 1;
+      status_buzzer = 1;
+      digitalWrite(BUZZER, HIGH); //LIGAR O BUZZER
+      Blynk.logEvent("alerta_temperatura");
+    }
+
+    if (status_interface == 0){
+      status_buzzer = 1;
+      digitalWrite(BUZZER, LOW); //DESLIGAR O BUZZER
     }
 
     delay(4000); //DELAY PARA DAR O EFEITO DE ALARME INTERMITENTE
-    //digitalWrite(BUZZER, LOW); //DESLIGAR O BUZZER
 
-    Blynk.logEvent("alerta_temperatura");
-
-    t = 0;
+  }else{
+    status_buzzer = 0;
+    digitalWrite(BUZZER, LOW); //DESLIGAR O BUZZER
   }
 
-  
    delay(1000); //INTERVALO ENTRE UMA COLETA
-
-   //COLETAR A CADA SEGUNDO E ENVIAR UMA MÉDIA PARA O SERVIDOR A CADA 30 SEGUNDOS
    
 
 }
