@@ -22,6 +22,9 @@
 #define LED5 22
 #define LED6 15
 #define LED7 23
+#define LED8 13
+#define LED9 12
+#define LED10 14
 
 #define BUZZER 2
 
@@ -33,11 +36,11 @@
 
 
 // CONFIGURAÇÕES DA CONEXÃO WI-FI
-/*char ssid[] = "LCI01";
-char pass[] = "up3@wz01";*/
+char ssid[] = "LCI01";
+char pass[] = "up3@wz01";
 
-char ssid[] = "_Mateus_";
-char pass[] = "91469365";
+/*char ssid[] = "_Mateus_";
+char pass[] = "91469365";*/
 
 //INICIALIZA A BIBLIOTECA PARA COLETA DE TEMPERATURA E UMIDADE
 DHT dht(DHTPIN, DHTTYPE);
@@ -91,6 +94,9 @@ void setup()
   pinMode(LED5, OUTPUT);
   pinMode(LED6, OUTPUT);
   pinMode(LED7, OUTPUT);
+  pinMode(LED8, OUTPUT);
+  pinMode(LED9, OUTPUT);
+  pinMode(LED10, OUTPUT);
   pinMode(BUZZER, OUTPUT);
 
   // Debug console
@@ -185,8 +191,29 @@ void loop()
     digitalWrite(LED7, LOW);
   }
 
+  //CONDIÇÃO PARA LIGAÇÃO DO OITAVO LED
+  if (t > (tbase + (incremento*8))){
+    digitalWrite(LED8, HIGH);    
+  }else{
+    digitalWrite(LED8, LOW);
+  }
+
+  //CONDIÇÃO PARA LIGAÇÃO DO NONO LED
+  if (t > (tbase + (incremento*9))){
+    digitalWrite(LED9, HIGH);    
+  }else{
+    digitalWrite(LED9, LOW);
+  }
+
+  //CONDIÇÃO PARA LIGAÇÃO DO DECIMO LED
+  if (t > (tbase + (incremento*10))){
+    digitalWrite(LED10, HIGH);    
+  }else{
+    digitalWrite(LED10, LOW);
+  }
+
   //CONDIÇÃO PARA DISPARO DO BUZZER (A PARTIR DO SEXTO LED)
-  if (t > (tbase + (incremento*6))){
+  if (t > (tbase + (incremento*7))){
 
     //SE O BUZZER JÁ ESTIVER ACIONADO, NÃO É NECESSÁRIO REENVIAR O COMANDO
     if (status_buzzer == 0){
