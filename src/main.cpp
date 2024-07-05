@@ -79,8 +79,6 @@ void myTimerEvent()
   Blynk.virtualWrite(V6, t);
 
   Blynk.virtualWrite(V8, status_interface);
-
-  Serial.println(status_interface);  
 }
 
 void setup()
