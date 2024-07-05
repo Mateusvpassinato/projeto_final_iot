@@ -33,8 +33,6 @@
 
 
 // CONFIGURAÇÕES DA CONEXÃO WI-FI
-/*char ssid[] = "NEIVA";
-char pass[] = "33991700";*/
 /*char ssid[] = "LCI01";
 char pass[] = "up3@wz01";*/
 
@@ -192,6 +190,7 @@ void loop()
   //CONDIÇÃO PARA DISPARO DO BUZZER (A PARTIR DO SEXTO LED)
   if (t > (tbase + (incremento*6))){
 
+    //SE O BUZZER JÁ ESTIVER ACIONADO, NÃO É NECESSÁRIO REENVIAR O COMANDO
     if (status_buzzer == 0){
       status_interface = 1;
       status_buzzer = 1;
@@ -199,20 +198,18 @@ void loop()
       Blynk.logEvent("alerta_temperatura");
     }
 
+    //SE O USUÁRIO INTERAGIR COM O BUZZER NA TELA, DESLIGA, MANTENDO O STATUS DA VARIAVEL status_buzzer
     if (status_interface == 0){
       status_buzzer = 1;
       digitalWrite(BUZZER, LOW); //DESLIGAR O BUZZER
     }
-
-    delay(4000); //DELAY PARA DAR O EFEITO DE ALARME INTERMITENTE
 
   }else{
     status_buzzer = 0;
     digitalWrite(BUZZER, LOW); //DESLIGAR O BUZZER
   }
 
-   delay(1000); //INTERVALO ENTRE UMA COLETA
-   
+   delay(1000); //INTERVALO ENTRE UMA COLETA   
 
 }
 
